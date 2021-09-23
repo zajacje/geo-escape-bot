@@ -1,5 +1,5 @@
 # geo-escape-bot
-*For Puzzle project in Foundations of Game Design*
+A Discord bot that plays a cooperative scavenger hunt game! *For Puzzle project in Foundations of Game Design*
 
 Play a cooperative scavenger hunt game over Discord.
  - Player 1 - Wakes up with amnesia, locked in a room. They can send messages to Player 2, but their phone is acting strange and is losing battery. Each clue solved jogs Player 1's memory of what happened the day before and can send Player 2 hints on where to go next.
@@ -13,7 +13,9 @@ Play a cooperative scavenger hunt game over Discord.
 - Each message exchanged in the play channel decrements Player 1's battery life. Once the battery reaches 0, the game is over. Try to find Player 1 before battery runs out!
 - If all clues are solved, congrats! You win!
 
-**Files**
+**Development Notes & Files**
+
+*Made using discord.py library and hosted on Repl.it*
 
 main.py
  - Runs the game. Configure game with constants at the top.
@@ -21,6 +23,8 @@ main.py
 
 clues.py
  - Stored as a list of tuples representing (clue, answer). The clues are presented in order. The next clue is given after the current clue is answered.
-  
+
+
 **TO DO**
 - Use PLAYING to end the game when battery ends. Can play multiple rounds without resetting bot?
+- Host bot elsewhere so it can always be run
