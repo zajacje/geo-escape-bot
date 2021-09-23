@@ -2,7 +2,7 @@ import queue
 
 clues = queue.Queue()
 
-text = [('West village H acronym?', 'WVH'), ('What is the CS building?', 'Khoury'), ('What is the student center called?' , 'Curry')]
+text = [('You remember seeing a lot of books. It was quiet.', 'snell'), ('Next, you went to a place with a lot of computers', 'khoury'), ('What is the student center called?' , 'curry')]
 
 for pair in text:
   clues.put(pair)
