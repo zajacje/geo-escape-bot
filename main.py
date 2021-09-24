@@ -1,5 +1,6 @@
 import discord
 import os
+from time import time, ctime
 
 from clues import clues
 
@@ -46,6 +47,7 @@ async def on_ready():
   # Starting battery
   channel = client.get_channel(int(CHANNEL_ID))
   await channel.send("Battery level: " + str(battery))
+  
 
 # Set player 1 and player 2  
 @client.event
@@ -120,7 +122,10 @@ async def on_message(message):
 
       # Send next clue
       else:
+        await channel.send("That sounds familiar...")
         print("SOLVED: " + clue)
+        t = time()
+        print("Time: " + str(ctime(t)))
         get_next_clue()
         #user = await client.fetch_user(int(PLAYER1_ID))
         #await user.send(clue)
