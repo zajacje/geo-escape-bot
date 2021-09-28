@@ -174,7 +174,7 @@ async def on_message(message):
             await channel.send("The electricity came back for a moment. " + PLAYER1_NAME + "\'s phone charged " + str(SMALL_BATTERY_INC) + "%!")
             inc_battery(SMALL_BATTERY_INC)
             await channel.send("Battery level: " + str(battery))
-            print("SOLVED: " + clue)
+            print("SOLVED: " + answer)
             t = time()
             print("Time: " + str(ctime(t)))
 
