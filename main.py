@@ -14,12 +14,14 @@ battery = 100  # Starting %
 BATTERY_DEC = 2  # Each message decreases battery by this %
 BATTERY_INC = 10  # When players solve a clue, it increases by this %
 SMALL_BATTERY_INC = 5 # When players confirm the location
-MAX_HINT_LEN = 2  # How many words are allowed in hint
+MAX_HINT_LEN = 1000  # How many words are allowed in hint
 NO_BATTERY_MSG = "Your phone ran out of battery 😭"  # Display when no more battery
 WIN_MSG = 'Congratulations!'  # Display when won (solved all clues)
 EMOJI_1 = '1️⃣'
 EMOJI_2 = '2️⃣'
-WELCOME_MSG = 'Welcome. Which player are you?\n ' + EMOJI_1 + ' -> Player 1\n ' + EMOJI_2 + ' -> Player 2\nPlease enter answers in all lowercase. Be careful, your phone has limited battery...'
+WELCOME_MSG = 'Welcome. Which player are you?\n ' + EMOJI_1 + ' -> Player 1\n ' + EMOJI_2 + ' -> Player 2\nAll answers are 1-2 words long without punctuation. You can confirm the location of the next clue. Be careful, your phone has limited battery...'
+
+
 
 # Initialize variables
 clue = ''
@@ -29,14 +31,24 @@ PLAYING = True
 PLAYER1_NAME = ''
 PLAYER2_NAME = ''
 
+PLAYER2_INTRO_MSG = 'You wake up in a dingy classroom. Your friend is no longer with you. You go to check your phone and realize that only discord is functioning properly. You notice your friend is online. You need to find them. (Hint: Remember the order of where you visit.)'
+
+
 # CLUES ##################################################################
 
 clues = queue.Queue()
 
 # memory, location, answer found @ location
-text = [('You wake up in a dingy classroom without power. It looks familiar but feels slightly different. There is no one around you. You cannot recall any of the events that happened the night before. There are things scattered around the room. You open your phone and can only access discord. You notice '+ PLAYER2_NAME + 'is online. Maybe they can help find out where you are? Try sending them a message.', 'wvh', 'INSERT_ONSITE CLUE_HERE'),
-        ('Next, you went to a place with a lot of computers', 'khoury', 'INSERT_ONSITE CLUE_HERE'),
-        ('What is the student center called?', 'curry', 'INSERT_ONSITE CLUE_HERE')]
+text = [('You wake up in a dingy classroom without power. It looks familiar but feels slightly different. There is no one around you. You cannot recall any of the events that happened the night before. There are things scattered around the room. You open your phone and can only access discord. You notice your friend is online. Maybe they can help find out where you are? Try sending them a message.', 'wvh', 'bark'), 
+        ('Good job! Keep track of the places you visited. You remember a patterned trail, but you can\'t quite remember the pattern.', 'khoury', 'dots'),
+        ('Dots… this jogs your memory! You saw a similar pattern again somewhere in an outdoor setting.', 'central west', '147'), # DO NOT CHANGE THIS CLUE
+        ('You remember walking past those tents on your way somewhere else, to a room with that number. You were headed to see an exhibition of miniature buildings... Amongst all the buildings a poem stood out to you… What was it called?', 'ryder', 'dead matter'),
+        ('You remember seeing a statue come alive. He had the cutest companion, and you gave it a few pets. Unfortunately, you had to part ways... Where should you head next?', 'shillman', 'natatorium'),
+        ('Where should you head next?', '__placeholder__', 'krentzman'),
+        ('Go gather people for a grad photo', 'krentzman', 'popeyes'),
+        ('You bought a chicken sandwhich for lunch and fed it to a dog. What year was the dog born?', 'curry', '2006'),
+        ('6 sounds really familiar. Maybe it relates to where you went next? You met a baseball player', 'churchill', 'cy young'),
+        ('Maybe you should try retracing your steps... It all comes full circle. Where is your friend?', 'snell', '31')]
 
 for triplet in text:
     clues.put(triplet)
@@ -102,6 +114,8 @@ async def on_reaction_add(reaction, user):
     # Player 2: set playerID
     if reaction.emoji == EMOJI_2:
         PLAYER2_ID = user.id
+        user = await client.fetch_user(int(PLAYER2_ID))
+        await user.send(PLAYER2_INTRO_MSG)
         print('Set player 2: ' + str(user.name))
         global PLAYER2_NAME
         PLAYER2_NAME = str(user.name)
@@ -133,7 +147,7 @@ async def on_message(message):
 
     # Update battery
     global PLAYING
-    if PLAYING and message.channel == channel:
+    if PLAYING and message.channel == channel and (message.author == player1 or message.author == player2):
         global battery
         battery -= BATTERY_DEC
         #channel = client.get_channel(int(CHANNEL_ID))
@@ -149,12 +163,15 @@ async def on_message(message):
 
     # Check channel for answer.
     if message.channel == channel:  #and message.author == player2
+        # Parse answer
+        msg = message.content.strip().lower(); 
         # Check if won
-        if message.content == answer:
+        if msg == answer:
             if clues.empty():
                 PLAYING = False
                 #channel = client.get_channel(int(CHANNEL_ID))
                 await channel.send(WIN_MSG)
+                print("Won game!")
 
             # Send next clue
             else:
@@ -169,7 +186,9 @@ async def on_message(message):
                 #user = await client.fetch_user(int(PLAYER1_ID))
                 #await user.send(clue)
                 await player1.send(clue)
-        elif message.content == location:
+                if clue == 'Dots… this jogs your memory! You saw a similar pattern again somewhere in an outdoor setting.':
+                  await player1.send(file=discord.File('Dots.jpeg'))
+        elif msg == location:
             await channel.send(PLAYER1_NAME + " remembers going there!")
             await channel.send("The electricity came back for a moment. " + PLAYER1_NAME + "\'s phone charged " + str(SMALL_BATTERY_INC) + "%!")
             inc_battery(SMALL_BATTERY_INC)
