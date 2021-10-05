@@ -7,6 +7,7 @@ Play a cooperative scavenger hunt game over Discord.
 
 **How to play**
 - Discord bot is hosted on Repl.it web server. Visit https://replit.com/@zajacje/geo-escape-bot#main.py and run. Add bot to server. Update CHANNEL_ID with Discord channel to play in. 
+- Alternatively, start UptimeRobot monitor to keep the bot active, even when Repl.it tab is closed.
 - 2 users react to welcome message to choose role (Player 1 or Player 2)
 - Player 1 is DM'd with a clue/memory fragment. They must give hints to Player 2 on where to go next using a limited number of words. Messages that are too long get deleted.
 - Player 2 will try to determine the location and walk there. They must type in the channel the missing word to complete the memory.

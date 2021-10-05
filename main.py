@@ -2,6 +2,7 @@ import discord
 import os
 import queue
 from time import time, ctime
+from keep_alive import keep_alive
 
 # Connect to discord
 client = discord.Client()
@@ -9,7 +10,7 @@ client = discord.Client()
 # Configure game
 PLAYER1_ID = 0  # ID of user stuck in room receiving clues
 PLAYER2_ID = 0  # ID of user walking around
-CHANNEL_ID = 890313505981493258  # Channel ID where game is being played
+CHANNEL_ID = 894702397945958480  # Channel ID where game is being played
 battery = 100  # Starting %
 BATTERY_DEC = 2  # Each message decreases battery by this %
 BATTERY_INC = 10  # When players solve a clue, it increases by this %
@@ -19,7 +20,7 @@ NO_BATTERY_MSG = "Your phone ran out of battery 😭"  # Display when no more ba
 WIN_MSG = 'Congratulations!'  # Display when won (solved all clues)
 EMOJI_1 = '1️⃣'
 EMOJI_2 = '2️⃣'
-WELCOME_MSG = 'Welcome. Which player are you?\n ' + EMOJI_1 + ' -> Player 1\n ' + EMOJI_2 + ' -> Player 2\nAll answers are 1-2 words long without punctuation. You can confirm the location of the next clue. Be careful, your phone has limited battery...'
+WELCOME_MSG = 'Welcome. Which player are you?\n ' + EMOJI_1 + ' -> Player 1\n ' + EMOJI_2 + ' -> Player 2\nAll answers are 1-2 words long without punctuation. You can confirm the location of the next clue. Uset this channel to send text messages. Be careful, your phone has limited battery...'
 
 
 
@@ -40,7 +41,7 @@ clues = queue.Queue()
 
 # memory, location, answer found @ location
 text = [('You wake up in a dingy classroom without power. It looks familiar but feels slightly different. There is no one around you. You cannot recall any of the events that happened the night before. There are things scattered around the room. You open your phone and can only access discord. You notice your friend is online. Maybe they can help find out where you are? Try sending them a message.', 'wvh', 'bark'), 
-        ('Good job! Keep track of the places you visited. You remember a patterned trail, but you can\'t quite remember the pattern.', 'khoury', 'dots'),
+        ('Good job! Keep track of the places you visited. You remember a patterned trail inside the building, but you can\'t quite remember the pattern.', 'khoury', 'dots'),
         ('Dots… this jogs your memory! You saw a similar pattern again somewhere in an outdoor setting.', 'central west', '147'), # DO NOT CHANGE THIS CLUE
         ('You remember walking past those tents on your way somewhere else, to a room with that number. You were headed to see an exhibition of miniature buildings... Amongst all the buildings a poem stood out to you… What was it called?', 'ryder', 'dead matter'),
         ('You remember seeing a statue come alive. He had the cutest companion, and you gave it a few pets. Unfortunately, you had to part ways... Where should you head next?', 'shillman', 'natatorium'),
@@ -154,7 +155,7 @@ async def on_message(message):
         await channel.send("Battery level: " + str(battery))
 
     # Check if no more battery
-    if battery == 0:
+    if battery <= 0:
         print("NO BATTERY LEFT 😭")
         #user = await client.fetch_user(int(PLAYER1_ID))
         #await user.send(NO_BATTERY_MSG)
@@ -197,6 +198,8 @@ async def on_message(message):
             t = time()
             print("Time: " + str(ctime(t)))
 
+# Start Flask webserver
+keep_alive()
 
 # Run bot with token
 client.run(os.getenv('TOKEN'))
